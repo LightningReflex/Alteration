@@ -1,4 +1,5 @@
 import mc from "minecraft-protocol";
+import { PCChunk } from "prismarine-chunk";
 import mineflayer from "mineflayer";
 import logger from "./utils/Logger";
 import { Terminal } from "./utils/Terminal";
@@ -16,6 +17,27 @@ export class Main {
             }
         } while (!email);
         logger.info(`Logging in with account: ${email}`);
+        const server = mc.createServer({
+            "online-mode": true,
+            host: '0.0.0.0',
+            port: 25565,
+            version: "1.20.6"
+        });
+        const mcData = require('minecraft-data')((server as any)["version"]);
+        // console.log(`mcData:`, mcData);
+        // server.on("login", (client) => {
+        //     logger.info(`Client ${client.username} has logged in.`);
+        //     client.on("end", () => {
+        //         logger.info(`Client ${client.username} has disconnected.`);
+        //     });
+        //     client.on("error", (err) => {
+        //         logger.error(`Error for client ${client.username}:`, err);
+        //     });
+        // });
+        // server.on("login", (client) => {
+        //     client.on()
+        // });
+
         const bot = mineflayer.createBot({
             host: "minehut.com",
             username: email,
@@ -25,6 +47,82 @@ export class Main {
                 logger.info(code);
             },
             profilesFolder: "../profiles",
+            version: "1.20.6",
+        });
+        server.on('playerJoin', function(client) {
+            console.log(`Player ${client.username} has joined the server.`);
+            const loginPacket = mcData.loginPacket;
+
+            client.write('login', {
+                ...loginPacket,
+                enforceSecureChat: false,
+                entityId: client.id,
+                hashedSeed: [0, 0],
+                maxPlayers: server.maxPlayers,
+                viewDistance: 10,
+                reducedDebugInfo: false,
+                enableRespawnScreen: true,
+                isDebug: false,
+                isFlat: false
+            });
+
+            const botEnt = bot.entity;
+            const botPos = botEnt.position || { x: 0, y: 0, z: 0 };
+            client.write('position', {
+                x: botPos.x || 0,
+                y: botPos.y || 0,
+                z: botPos.z || 0,
+                yaw: botEnt.pitch || 0,
+                pitch: botEnt.yaw || 0,
+                flags: 0x00,
+                teleportId: 0,
+            });
+
+            // Send chunks
+            // (<PCChunk>bot.world.getColumns()[0].column).dump()
+            // const column = bot.world.getColumns()[0].column;
+            const columns = bot.world.getColumns();
+            for (const columnLoop of columns) {
+                // const column = (<PCChunk>bot.world.getColumns()[0].column);
+                const column = columnLoop.column as PCChunk;
+                const light = column.dumpLight() as unknown as {
+                    skyLight: Buffer,
+                    blockLight: Buffer,
+                    skyLightMask: number[],
+                    blockLightMask: number[],
+                    emptySkyLightMask: number[],
+                    emptyBlockLightMask: number[]
+                };
+                client.write('map_chunk', {
+                    x: columnLoop.chunkX,
+                    z: columnLoop.chunkZ,
+                    heightmaps: {
+                        "type": "compound",
+                        "value": {
+                            "MOTION_BLOCKING": {
+                            "type": "longArray",
+                            "value": [[521111475,-638782342],[533710819,-235603332],[521103283,-639041921],[529508307,-370083716],[516908963,-100860802],[525313987,-504301445],[512747491,-235340675],[521111491,-504301957],[529516515,-235603331],[521111491,-638782338],[529508307,-370083716],[521103283,-101122946],[525313987,-504301444],[533678051,-235340675],[521111491,-504298879],[529516515,-369821059],[521111492,168097916],[529508307,-369821572],[521111474,-647431042],[525314003,-504301444],[516900259,-235340675],[525313987,-504301443],[378521571,-235603331],[521111507,-369821061],[529516499,-369821059],[529500115,-370363266],[529508307,-369821059],[521111474,-637993858],[529516515,-235340674],[520841187,-235340675],[533719011,-369821572],[529516515,-235340161],[525314003,-370083716],[529516516,33620096],[542099427,-370606466],[529541140,168098433],[3,-100860802]
+                            ]
+                            },
+                            "WORLD_SURFACE": {
+                            "type": "longArray",
+                            "value": [[521111475,-638782342],[533710819,-235603332],[521103283,-639041921],[529508307,-370083716],[516908963,-100860802],[525313987,-504301445],[512747491,-235340675],[521111491,-504301957],[529516515,-235603331],[521111491,-638782338],[529508307,-370083716],[521103283,-101122946],[525313987,-504301444],[533678051,-235340675],[521111491,-504298879],[529516515,-369821059],[521111492,168097916],[529508307,-369821572],[521111474,-647431042],[525314003,-504301444],[525288867,-235340675],[525313987,-504301443],[378521571,-235603331],[521111507,-369821061],[529516499,-369821059],[529500115,-370363266],[529508307,-369821059],[521111474,-637993858],[529516515,-235340674],[520841187,-235340675],[533719011,-101385092],[529516515,-235340161],[525314003,-369559428],[529516516,33620096],[542099427,-370606466],[529541140,168099457],[3,-100860802]
+                            ]
+                            }
+                        }
+                    },
+                    chunkData: column.dump(),
+                    blockEntities: [],
+                    skyLightMask: light.skyLightMask,
+                    blockLightMask: light.blockLightMask,
+                    emptySkyLightMask: light.emptySkyLightMask,
+                    emptyBlockLightMask: light.emptyBlockLightMask,
+                    skyLight: light.skyLight,
+                    blockLight: light.blockLight,
+                });
+            }
+
+            // Tell client done loading chunks
         });
         bot.on("spawn", () => {
             console.log("Bot has spawned in the game.");
@@ -39,6 +137,38 @@ export class Main {
         //     console.log(`Chat message from ${username}: ${message}`);
         //     console.log(`${username}: ${message}`);
         // });
+        bot._client.on("packet", (data, meta) => {
+            // only registry_data is logged
+            // if (meta.name === "registry_data") {
+            //     console.log("Registry data received:", data.id);
+            //     // logger.info("Registry data received:", data);
+            //     // save to file named after "id"
+            //     const id = data.id.replace("/", "");
+            //     const fs = require("fs");
+            //     const path = require("path");
+            //     const filePath = path.join(__dirname, `registry_data_${id}.json`);
+            //     fs.writeFile(filePath, JSON.stringify(data, null, 2), (err: NodeJS.ErrnoException | null) => {
+            //         if (err) {
+            //             logger.error("Error writing registry data to file:", err);
+            //         }
+            //         else {
+            //             logger.info(`Registry data saved to ${filePath}`);
+            //         }
+            //     });
+            // }
+            // if map_chunk print hieghtmaps jsonified
+            // if (meta.name === "map_chunk") {
+            //     console.log("Map chunk received:", JSON.stringify(data.heightmaps, null, 2));
+            //     // logger.info("Map chunk received:", data.heightmaps);
+            // }
+            // Print packet name received
+            // console.log(`Packet received: ${meta.name}`);
+            // log to test.txt
+            const fs = require("fs");
+            const path = require("path");
+            const filePath = path.join(__dirname, "test.txt");
+            fs.appendFile(filePath, `Packet received: ${meta.name}\n`);
+        });
         bot.on("message", (message) => {
             // console.log("Message received:", message.toAnsi());
             console.log(`${chalk.gray(`[${bot.username}]`)} ${chalk.blue("[CHAT]")} ${message.toAnsi()}`);
