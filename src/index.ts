@@ -1,1 +1,3 @@
-console.log("Hello World!");
+import { Main } from "./Main";
+
+Main.main();
