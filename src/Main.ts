@@ -18,6 +18,6 @@ export class Main {
                 logger.warn("Email cannot be empty. Please try again.");
             }
         } while (!email);
-        this.botAccountManager.addAccount(email, "minehut.com", 25565)
+        this.botAccountManager.addAccount(email, "minehut.com", 25565);
     }
 }
