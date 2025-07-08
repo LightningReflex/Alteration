@@ -61,15 +61,13 @@ export default class BotAccount {
 
     public log(type: LogType, message: string): void {
         const username = this.bot ? this.bot.username : this.username;
-        // console.log(`${chalk.gray(`[${username}]`)} ${chalk.blue("[CHAT]")} ${message}`);
-        // CHAT will be blue other is red
-        let prefix = "";
+        let prefix;
         switch (type) {
             case LogType.CHAT:
-                prefix += chalk.yellow("[CHAT]");
+                prefix = chalk.yellow("[CHAT]");
                 break;
             default:
-                prefix += chalk.blue("[INFO]");
+                prefix = chalk.blue("[INFO]");
                 break;
         }
         console.log(`${chalk.gray(`[${username}]`)} ${prefix} ${message}`);
