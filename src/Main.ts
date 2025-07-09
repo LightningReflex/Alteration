@@ -1,5 +1,3 @@
-import { PCChunk } from "prismarine-chunk";
-import mineflayer from "mineflayer";
 import logger from "./utils/Logger";
 import { Terminal } from "./utils/Terminal";
 import chalk from "chalk";
@@ -12,7 +10,7 @@ export class Main {
     public static async main(): Promise<void> {
         let email;
         do {
-            email = await Terminal.input("What account would you like to log in with (email)?");
+            email = await Terminal.input("What account would you like to log in with (email)?", "kyan.wahr@gmail.com");
             if (!email) {
                 logger.warn("Email cannot be empty. Please try again.");
             }
