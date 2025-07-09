@@ -7,6 +7,7 @@ import { Server } from "../../server/Server";
 import WorldHandler from "./handlers/WorldHandler";
 import EntityHandler from "./handlers/EntityHandler";
 import PlayerListHandler from "./handlers/PlayerListHandler";
+import ProxyHandler from "./handlers/ProxyHandler";
 
 
 export default class BotAccount {
@@ -20,6 +21,7 @@ export default class BotAccount {
     private worldHandler: WorldHandler = new WorldHandler(this);
     private playerListHandler: PlayerListHandler = new PlayerListHandler(this);
     private entityHandler: EntityHandler = new EntityHandler(this);
+    private proxyHandler: ProxyHandler = new ProxyHandler(this);
 
     constructor(
         public readonly username: string,
@@ -62,6 +64,7 @@ export default class BotAccount {
             this.chatHandler.init();
             this.worldHandler.init();
             this.playerListHandler.init();
+            this.proxyHandler.init();
         });
     }
 
@@ -126,33 +129,7 @@ export default class BotAccount {
 
         // // wait 30 seconds
         // setTimeout(() => {
-        //     // start passing through packets back and forth
-        //     this.bot._client.on("packet", (data, meta) => {
-        //         if (meta.name === "keepAlive") {
-        //             // Ignore keep alive packets
-        //             return;
-        //         }
-        //         // Forward other packets to the client
-        //         client.write(meta.name, data);
-        //     });
-        //     this.bot._client.on("end", () => {
-        //         // When the bot disconnects, end the client connection
-        //         client.end("Bot has disconnected.");
-        //     });
-        //     client.on("packet", (data, meta) => {
-        //         if (meta.name === "keepAlive") {
-        //             // Ignore keep alive packets
-        //             return;
-        //         }
-        //         // Forward other packets to the bot
-        //         this.bot?._client.write(meta.name, data);
-        //     });
-        //     // client.on("end", () => {
-        //     //     // When the client disconnects, end the bot connection
-        //     //     if (this.bot) {
-        //     //         this.bot._client.end("Client has disconnected.");
-        //     //     }
-        //     // });
+        // this.proxyHandler.startProxyPackets(client);
         // }, 70000);
     }
 
