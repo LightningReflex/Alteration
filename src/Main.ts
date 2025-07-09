@@ -1,14 +1,13 @@
-import mc from "minecraft-protocol";
 import { PCChunk } from "prismarine-chunk";
 import mineflayer from "mineflayer";
 import logger from "./utils/Logger";
 import { Terminal } from "./utils/Terminal";
 import chalk from "chalk";
-import allMcData from "minecraft-data";
 import BotAccountManager from "./accountmanager/BotAccountManager";
+import { Server } from "./server/Server";
 
 export class Main {
-    private static botAccountManager: BotAccountManager = new BotAccountManager();
+    public static botAccountManager: BotAccountManager = new BotAccountManager();
 
     public static async main(): Promise<void> {
         let email;
@@ -18,6 +17,8 @@ export class Main {
                 logger.warn("Email cannot be empty. Please try again.");
             }
         } while (!email);
-        this.botAccountManager.addAccount(email, "minehut.com", 25565);
+        Main.botAccountManager.addAccount(email, "minehut.com", 25565);
+
+        Server.start();
     }
 }

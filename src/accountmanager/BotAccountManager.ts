@@ -20,4 +20,12 @@ export default class BotAccountManager {
     public removeAccount(username: string): void {
         this.accounts.delete(username);
     }
+
+    /**
+     * Get all accounts managed by this manager.
+     * @returns A copy of the accounts array.
+     */
+    public getAllAccounts(): BotAccount[] {
+        return Array.from(this.accounts.values());
+    }
 }
