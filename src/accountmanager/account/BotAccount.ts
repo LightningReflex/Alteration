@@ -103,7 +103,7 @@ export default class BotAccount {
 
         this.worldHandler.sendChunksToClient(client);
 
-        client.write('position', {
+        client.write("position", {
             x: this.bot.entity.position.x,
             y: this.bot.entity.position.y,
             z: this.bot.entity.position.z,
@@ -115,11 +115,11 @@ export default class BotAccount {
 
         this.playerListHandler.sendPlayerListToClient(client);
 
-        client.write('spawn_position', {
+        client.write("spawn_position", {
             location: this.bot.entity.position,
             angle: 0,
         });
-        client.write('update_time', {
+        client.write("update_time", {
             age: this.bot.time.age,
             time: this.bot.time.time,
         });

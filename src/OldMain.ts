@@ -199,14 +199,14 @@ export class Main {
                     entity.position && entity.position.x !== undefined && entity.position.y !== undefined && entity.position.z !== undefined
                 ) {
                     console.log(`Spawning entity: ${entity.name}, ${entity.entityType}`);
-                    if (entity.type === 'player') {
+                    if (entity.type === "player") {
                         const uuid = entity.uuid ?? Object.values(bot.players).find(p => p.username === entity.username)?.uuid
                         if (!uuid) continue
 
                         // If we're missing the UUID we need to temporarily add it to the tab list (it's probably an NPC)
                         const isTempPlayer = !Object.values(bot.players).some(p => p.uuid === uuid) && entity.uuid && entity.username
                         if (isTempPlayer) {
-                            client.write('player_info', {
+                            client.write("player_info", {
                                 action: 17,
                                 data: [{
                                     uuid: entity.uuid,
@@ -219,7 +219,7 @@ export class Main {
                             })
                         }
 
-                        client.write('named_entity_spawn', {
+                        client.write("named_entity_spawn", {
                             entityId: entity.id,
                             playerUUID: uuid,
                             ...entity.position,
@@ -228,7 +228,7 @@ export class Main {
                         })
 
                         if (isTempPlayer) {
-                            client.write('player_remove', {
+                            client.write("player_remove", {
                                 players: [entity.uuid]
                             })
                         }
