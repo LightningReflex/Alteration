@@ -1,5 +1,4 @@
-import chalk from "chalk";
-import BotAccount, { LogType } from "../BotAccount";
+import { LogType } from "../BotAccount";
 import Handler from "./Handler";
 import { Bot } from "mineflayer";
 

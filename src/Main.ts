@@ -1,6 +1,5 @@
 import logger from "./utils/Logger";
 import { Terminal } from "./utils/Terminal";
-import chalk from "chalk";
 import BotAccountManager from "./accountmanager/BotAccountManager";
 import { Server } from "./server/Server";
 

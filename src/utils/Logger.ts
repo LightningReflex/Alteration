@@ -1,4 +1,4 @@
-import { Logger, ILogObj } from "tslog";
+import { Logger } from "tslog";
 
 const logger = new Logger({
     prettyLogTemplate: "{{hh}}:{{MM}}:{{ss}} {{logLevelName}}\t[{{filePathWithLine}}{{name}}]\t",

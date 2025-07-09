@@ -1,12 +1,8 @@
-import chalk from "chalk";
-import BotAccount, { LogType } from "../BotAccount";
 import Handler from "./Handler";
 import { Bot } from "mineflayer";
 import { ServerClient } from "minecraft-protocol";
 import { PCChunk } from "prismarine-chunk";
 import type { Vec3 } from "vec3";
-
-import allMcData, { LoginPacket } from "minecraft-data";
 import { fixNbt } from "../../../utils/Utils";
 
 // Special thanks to https://github.com/PondWader/Mineflayer-Spectator

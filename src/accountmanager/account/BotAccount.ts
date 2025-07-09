@@ -4,7 +4,6 @@ import ChatHandler from "./handlers/ChatHandler";
 import chalk from "chalk";
 import { ServerClient } from "minecraft-protocol";
 import { Server } from "../../server/Server";
-import { PCChunk } from "prismarine-chunk";
 import WorldHandler from "./handlers/WorldHandler";
 
 
