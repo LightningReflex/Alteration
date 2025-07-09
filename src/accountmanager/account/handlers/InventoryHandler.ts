@@ -21,7 +21,7 @@ export default class InventoryHandler extends Handler {
     public sendInventoryToClient(client: ServerClient) {
         const bot: Bot = this.botAccount.bot!;
         const inventorySlots = bot.inventory.slots as (ItemAccessor | null)[];
-        client.write('window_items', {
+        client.write("window_items", {
             windowId: 0,
             stateId: 0,
             items: inventorySlots.map(slot => slot && slot.count > 0 ? {
