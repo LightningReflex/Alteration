@@ -8,6 +8,7 @@ import WorldHandler from "./handlers/WorldHandler";
 import EntityHandler from "./handlers/EntityHandler";
 import PlayerListHandler from "./handlers/PlayerListHandler";
 import ProxyHandler from "./handlers/ProxyHandler";
+import InventoryHandler from "./handlers/InventoryHandler";
 
 
 export default class BotAccount {
@@ -21,6 +22,7 @@ export default class BotAccount {
     private worldHandler: WorldHandler = new WorldHandler(this);
     private playerListHandler: PlayerListHandler = new PlayerListHandler(this);
     private entityHandler: EntityHandler = new EntityHandler(this);
+    private inventoryHandler: InventoryHandler = new InventoryHandler(this);
     private proxyHandler: ProxyHandler = new ProxyHandler(this);
 
     constructor(
@@ -64,6 +66,7 @@ export default class BotAccount {
             this.chatHandler.init();
             this.worldHandler.init();
             this.playerListHandler.init();
+            this.inventoryHandler.init();
             this.proxyHandler.init();
         });
     }
@@ -117,6 +120,7 @@ export default class BotAccount {
         });
 
         this.playerListHandler.sendPlayerListToClient(client);
+        this.inventoryHandler.sendInventoryToClient(client);
 
         client.write("spawn_position", {
             location: this.bot.entity.position,
@@ -129,7 +133,7 @@ export default class BotAccount {
 
         // // wait 30 seconds
         // setTimeout(() => {
-        // this.proxyHandler.startProxyPackets(client);
+        this.proxyHandler.startProxyPackets(client);
         // }, 70000);
     }
 
