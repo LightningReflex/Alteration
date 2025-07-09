@@ -4,6 +4,7 @@ import { ServerClient } from "minecraft-protocol";
 import { PCChunk } from "prismarine-chunk";
 import type { Vec3 } from "vec3";
 import { fixNbt } from "../../../utils/Utils";
+import logger from "../../../utils/Logger";
 
 // Special thanks to https://github.com/PondWader/Mineflayer-Spectator
 
@@ -16,11 +17,9 @@ type BlockEntity = {
 }
 
 type Chunk = PCChunk & {
-    // _spectatorData: any;
     _spectatorData: {
         blockEntityTypes: { [key: string]: number }; // Maps "x,y,z" to block entity type
     }
-    // blockEntities: any;
     blockEntities: BlockEntity[];
 };
 
@@ -62,7 +61,7 @@ export default class WorldHandler extends Handler {
                 for (const blockEntity of data.blockEntities) {
                     const column = bot.world.getColumn(data.x, data.z) as Chunk;
                     if (!column) {
-                        console.log(`WorldHandler: Something weird happened, could not find column in Mineflayer's world state at ${data.x}, ${data.z}`);
+                        logger.warn(`Something weird happened, could not find column in Mineflayer's world state at ${data.x}, ${data.z}`);
                         return;
                     }
                     if (!column._spectatorData) column._spectatorData = { blockEntityTypes: {} };

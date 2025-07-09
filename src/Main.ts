@@ -9,7 +9,7 @@ export class Main {
     public static async main(): Promise<void> {
         let email;
         do {
-            email = await Terminal.input("What account would you like to log in with (email)?", "kyan.wahr@gmail.com");
+            email = await Terminal.input("What account would you like to log in with (email)?");
             if (!email) {
                 logger.warn("Email cannot be empty. Please try again.");
             }
