@@ -55,7 +55,6 @@ type TileEntityDataPacket = {
 export default class WorldHandler extends Handler {
     protected onInit(): void {
         const bot: Bot = this.botAccount.bot!;
-        // bot._client.on('map_chunk', (data) => {
         bot._client.on('map_chunk', (data: MapChunkPacket) => {
             if (data.blockEntities.length > 0) setImmediate(() => {
                 for (const blockEntity of data.blockEntities) {
@@ -69,11 +68,12 @@ export default class WorldHandler extends Handler {
                 }
             });
         });
+
         bot._client.on('tile_entity_data', (data: TileEntityDataPacket) => {
             const column = bot.world.getColumnAt(data.location) as Chunk;
-            if (!column._spectatorData) column._spectatorData = { blockEntityTypes: {} }
-            column._spectatorData.blockEntityTypes[`${data.location.x % 16},${data.location.y},${data.location.z % 16}`] = data.action
-        })
+            if (!column._spectatorData) column._spectatorData = { blockEntityTypes: {} };
+            column._spectatorData.blockEntityTypes[`${data.location.x % 16},${data.location.y},${data.location.z % 16}`] = data.action;
+        });
     }
 
     public sendChunksToClient(client: ServerClient) {
