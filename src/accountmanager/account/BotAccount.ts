@@ -5,6 +5,8 @@ import chalk from "chalk";
 import { ServerClient } from "minecraft-protocol";
 import { Server } from "../../server/Server";
 import WorldHandler from "./handlers/WorldHandler";
+import EntityHandler from "./handlers/EntityHandler";
+import PlayerListHandler from "./handlers/PlayerListHandler";
 
 
 export default class BotAccount {
@@ -16,6 +18,8 @@ export default class BotAccount {
     // Handlers
     private chatHandler: ChatHandler = new ChatHandler(this);
     private worldHandler: WorldHandler = new WorldHandler(this);
+    private playerListHandler: PlayerListHandler = new PlayerListHandler(this);
+    private entityHandler: EntityHandler = new EntityHandler(this);
 
     constructor(
         public readonly username: string,
@@ -57,6 +61,7 @@ export default class BotAccount {
 
             this.chatHandler.init();
             this.worldHandler.init();
+            this.playerListHandler.init();
         });
     }
 
@@ -105,17 +110,19 @@ export default class BotAccount {
             yaw: this.bot.entity.yaw,
             pitch: this.bot.entity.pitch,
             flags: 0,
-            teleportId: 0
-        })
+            teleportId: 0,
+        });
+
+        this.playerListHandler.sendPlayerListToClient(client);
 
         client.write('spawn_position', {
             location: this.bot.entity.position,
-            angle: 0
-        })
+            angle: 0,
+        });
         client.write('update_time', {
             age: this.bot.time.age,
-            time: this.bot.time.time
-        })
+            time: this.bot.time.time,
+        });
 
         // // wait 30 seconds
         // setTimeout(() => {
