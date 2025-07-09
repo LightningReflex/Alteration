@@ -102,7 +102,6 @@ export default class WorldHandler extends Handler {
                 emptySkyLightMask: number[],
                 emptyBlockLightMask: number[],
             };
-            // console.log(`Sending chunk at ${columnLoop.chunkX}, ${columnLoop.chunkZ} to client.`);
             client.write("map_chunk", {
                 x: chunkX,
                 z: chunkZ,
@@ -122,11 +121,11 @@ export default class WorldHandler extends Handler {
                 chunkData: column.dump(),
                 blockEntities: Object.entries(column.blockEntities).map(([key, nbtData]) => {
                     if (!column._spectatorData) {
-                        console.log(`Mineflayer-Spectator: Missing _spectatorData for chunk at ${chunkX}, ${chunkZ}`);
+                        logger.warn(`Mineflayer-Spectator: Missing _spectatorData for chunk at ${chunkX}, ${chunkZ}`);
                         return;
                     }
                     if (!column._spectatorData.blockEntityTypes[key]) {
-                        console.log(`Mineflayer-Spectator: Missing blockEntity type for block entity at ${key} in chunk at ${chunkX}, ${chunkZ}`);
+                        logger.warn(`Mineflayer-Spectator: Missing blockEntity type for block entity at ${key} in chunk at ${chunkX}, ${chunkZ}`);
                         return;
                     }
                     const [x, y, z] = key.split(",").map(Number);
