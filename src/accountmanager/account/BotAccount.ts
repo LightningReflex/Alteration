@@ -54,7 +54,7 @@ export default class BotAccount {
             });
 
             this.bot.on("end", () => {
-                console.log(`Bot ${this.username} has disconnected.`);
+                logger.warn(`Bot ${this.username} has disconnected. Attempting to reconnect...`);
                 this.connectionEnded = true
                 setTimeout(this.connect.bind(this), 5000); // Reconnect after 5 seconds
             });
