@@ -1,7 +1,6 @@
 import { ServerClient } from "minecraft-protocol";
 import Handler from "./Handler";
 import { Bot } from "mineflayer";
-
 export default class ProxyHandler extends Handler {
     protected onInit(): void {
         // const bot: Bot = this.botAccount.bot!;
