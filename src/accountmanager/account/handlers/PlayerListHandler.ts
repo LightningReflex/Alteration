@@ -32,6 +32,8 @@ export default class PlayerListHandler extends Handler {
         this.header = { type: "string", value: "" };
         this.footer = { type: "string", value: "" };
 
+        this.playerInfoList = [];
+
         bot._client.on("playerlist_header", (data) => {
             this.header = data.header;
             this.footer = data.footer;
