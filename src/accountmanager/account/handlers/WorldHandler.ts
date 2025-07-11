@@ -75,6 +75,14 @@ export default class WorldHandler extends Handler {
 
     public sendChunksToClient(client: ServerClient) {
         const bot: Bot = this.botAccount.bot!;
+
+        // Tell client that chunks are now loading
+        // Fun fact: if you don't send this, it takes 30 whole
+        // seconds for the client to time out and load anyways :(
+        client.write("game_state_change", {
+            reason: 13,
+        });
+
         const botEnt = bot.entity;
         const botPos = botEnt.position || { x: 0, y: 0, z: 0 };
         let columns = bot.world.getColumns();
