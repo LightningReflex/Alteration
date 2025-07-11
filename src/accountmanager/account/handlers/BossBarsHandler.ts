@@ -80,7 +80,6 @@ export default class BossBarsHandler extends Handler {
     }
 
     public sendBossBarsToClient(client: ServerClient) {
-        const bot: Bot = this.botAccount.bot!;
         this.bossBars.forEach(bar => {
             client.write("boss_bar", {
                 action: 0, // Add boss bar
