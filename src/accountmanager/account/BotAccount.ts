@@ -20,6 +20,7 @@ export default class BotAccount {
     public port: number = 25565;
 
     // Handlers
+    public proxyHandler: ProxyHandler = new ProxyHandler(this);
     private chatHandler: ChatHandler = new ChatHandler(this);
     private worldHandler: WorldHandler = new WorldHandler(this);
     private playerListHandler: PlayerListHandler = new PlayerListHandler(this);
@@ -27,7 +28,6 @@ export default class BotAccount {
     private inventoryHandler: InventoryHandler = new InventoryHandler(this);
     private teamsHandler: TeamsHandler = new TeamsHandler(this);
     private scoreboardsHandler: ScoreboardsHandler = new ScoreboardsHandler(this);
-    private proxyHandler: ProxyHandler = new ProxyHandler(this);
 
     constructor(
         public readonly username: string,
@@ -67,13 +67,14 @@ export default class BotAccount {
                 setTimeout(this.connect.bind(this), 5000); // Reconnect after 5 seconds
             });
 
+            this.proxyHandler.init();
+
             this.chatHandler.init();
             this.worldHandler.init();
             this.playerListHandler.init();
             this.inventoryHandler.init();
             this.teamsHandler.init();
             this.scoreboardsHandler.init();
-            this.proxyHandler.init();
         });
     }
 
