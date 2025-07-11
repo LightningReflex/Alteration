@@ -101,6 +101,7 @@ export default class BotAccount {
             // worldState:
             enforceSecureChat: false,
         });
+        this.chatHandler.fixChatSigning(client);
 
         const botEnt = this.bot.entity;
         const botPos = botEnt.position || { x: 0, y: 0, z: 0 };
