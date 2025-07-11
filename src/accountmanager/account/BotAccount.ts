@@ -145,7 +145,7 @@ export default class BotAccount {
         // wait 30 seconds
         setTimeout(() => {
             this.proxyHandler.startProxyPackets(client);
-        }, 5000);
+        }, 1000);
     }
 
     public log(type: LogType, message: string): void {
