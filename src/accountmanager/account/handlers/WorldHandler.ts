@@ -17,9 +17,7 @@ type BlockEntity = {
 }
 
 type Chunk = PCChunk & {
-    _spectatorData: {
-        blockEntityTypes: { [key: string]: number }; // Maps "x,y,z" to block entity type
-    }
+    blockEntityTypes: { [key: string]: number }; // Maps "x,y,z" to block entity type
     blockEntities: BlockEntity[];
 };
 
@@ -60,16 +58,16 @@ export default class WorldHandler extends Handler {
                         logger.warn(`Something weird happened, could not find column in Mineflayer's world state at ${data.x}, ${data.z}`);
                         return;
                     }
-                    if (!column._spectatorData) column._spectatorData = { blockEntityTypes: {} };
-                    column._spectatorData.blockEntityTypes[`${blockEntity.x},${blockEntity.y},${blockEntity.z}`] = blockEntity.type;
+                    if (!column.blockEntityTypes) column.blockEntityTypes = {};
+                    column.blockEntityTypes[`${blockEntity.x % 16},${blockEntity.y},${blockEntity.z % 16}`] = blockEntity.type;
                 }
             });
         });
 
         bot._client.on("tile_entity_data", (data: TileEntityDataPacket) => {
             const column = bot.world.getColumnAt(data.location) as Chunk;
-            if (!column._spectatorData) column._spectatorData = { blockEntityTypes: {} };
-            column._spectatorData.blockEntityTypes[`${data.location.x % 16},${data.location.y},${data.location.z % 16}`] = data.action;
+            if (!column.blockEntityTypes) column.blockEntityTypes = {};
+            column.blockEntityTypes[`${data.location.x % 16},${data.location.y},${data.location.z % 16}`] = data.action;
         });
     }
 
@@ -128,12 +126,12 @@ export default class WorldHandler extends Handler {
                 },
                 chunkData: column.dump(),
                 blockEntities: Object.entries(column.blockEntities).map(([key, nbtData]) => {
-                    if (!column._spectatorData) {
-                        logger.warn(`Mineflayer-Spectator: Missing _spectatorData for chunk at ${chunkX}, ${chunkZ}`);
+                    if (!column.blockEntityTypes) {
+                        logger.warn(`Missing blockEntityTypes for chunk at ${chunkX}, ${chunkZ}`);
                         return;
                     }
-                    if (!column._spectatorData.blockEntityTypes[key]) {
-                        logger.warn(`Mineflayer-Spectator: Missing blockEntity type for block entity at ${key} in chunk at ${chunkX}, ${chunkZ}`);
+                    if (!column.blockEntityTypes[key]) {
+                        logger.warn(`Missing blockEntity type for block entity at ${key} in chunk at ${chunkX}, ${chunkZ}`);
                         return;
                     }
                     const [x, y, z] = key.split(",").map(Number);
@@ -141,7 +139,7 @@ export default class WorldHandler extends Handler {
                         x,
                         y,
                         z,
-                        type: column._spectatorData.blockEntityTypes[key],
+                        type: column.blockEntityTypes[key],
                         nbtData: nbtData ? fixNbt(nbtData) : undefined,
                     };
                 }).filter(e => e !== undefined),
