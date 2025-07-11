@@ -112,7 +112,6 @@ export default class TeamsHandler extends Handler {
             //         if 3: string[]varint
             //         if 4: string[]varint
             //         default: void
-            console.log(`Sending team to client:`, team);
             client.write("teams", {
                 team: team.team,
                 mode: 0, // Create or update team
