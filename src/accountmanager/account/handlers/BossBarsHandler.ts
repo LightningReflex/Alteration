@@ -1,5 +1,4 @@
 import { ServerClient } from "minecraft-protocol";
-import { LogType } from "../BotAccount";
 import Handler from "./Handler";
 import { Bot } from "mineflayer";
 import logger from "../../../utils/Logger";
