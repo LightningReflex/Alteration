@@ -11,6 +11,7 @@ import ProxyHandler from "./handlers/ProxyHandler";
 import InventoryHandler from "./handlers/InventoryHandler";
 import TeamsHandler from "./handlers/TeamsHandler";
 import ScoreboardsHandler from "./handlers/ScoreboardsHandler";
+import BossBarsHandler from "./handlers/BossBarsHandler";
 
 
 export default class BotAccount {
@@ -28,6 +29,7 @@ export default class BotAccount {
     private inventoryHandler: InventoryHandler = new InventoryHandler(this);
     private teamsHandler: TeamsHandler = new TeamsHandler(this);
     private scoreboardsHandler: ScoreboardsHandler = new ScoreboardsHandler(this);
+    private bossBarsHandler: BossBarsHandler = new BossBarsHandler(this);
 
     constructor(
         public readonly username: string,
@@ -75,6 +77,7 @@ export default class BotAccount {
             this.inventoryHandler.init();
             this.teamsHandler.init();
             this.scoreboardsHandler.init();
+            this.bossBarsHandler.init();
         });
     }
 
@@ -131,6 +134,7 @@ export default class BotAccount {
         this.inventoryHandler.sendInventoryToClient(client);
         this.teamsHandler.sendTeamsToClient(client);
         this.scoreboardsHandler.sendScoreboardsToClient(client);
+        this.bossBarsHandler.sendBossBarsToClient(client);
 
         client.write("spawn_position", {
             location: this.bot.entity.position,
