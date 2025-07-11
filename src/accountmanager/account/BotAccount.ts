@@ -135,6 +135,7 @@ export default class BotAccount {
         this.teamsHandler.sendTeamsToClient(client);
         this.scoreboardsHandler.sendScoreboardsToClient(client);
         this.bossBarsHandler.sendBossBarsToClient(client);
+        this.chatHandler.sendChatHistory(client);
 
         client.write("spawn_position", {
             location: this.bot.entity.position,
