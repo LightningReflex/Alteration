@@ -2,11 +2,14 @@ import { Main } from "../Main";
 import mc from "minecraft-protocol";
 import allMcData, { IndexedData } from "minecraft-data";
 import logger from "../utils/Logger";
+import { ServerClientWrapper } from "./ServerClientWrapper";
 
 export class Server {
-    public static mcData: IndexedData;
+    public mcData!: IndexedData;
 
-    public static async start(): Promise<void> {
+    public connectedClients: ServerClientWrapper[] = [];
+
+    public async start(): Promise<void> {
         const server = mc.createServer({
             "online-mode": true,
             host: "0.0.0.0",
@@ -14,8 +17,8 @@ export class Server {
             version: "1.20.6"
         });
         // TODO: Maybe add proper typings for the stuff node-minecraft-protocol and mineflayer just doesn't provide but has for some reason
-        Server.mcData = allMcData((server as any as { version: string }).version);
-        server.on("playerJoin", function(client) {
+        this.mcData = allMcData((server as any as { version: string }).version);
+        server.on("playerJoin", (client) => {
             const allAccounts = Main.botAccountManager.getAllAccounts();
             const botAccount = allAccounts[0];
             const bot = botAccount?.bot;
@@ -24,8 +27,16 @@ export class Server {
                 return;
             }
 
+            const scw = new ServerClientWrapper(client);
+            this.connectedClients.push(scw);
             logger.info(`Player ${client.username} has joined the server.`);
-            botAccount.connectClient(client);
+            botAccount.connectClient(scw);
+
+            client.on("end", () => {
+                logger.info(`Player ${client.username} has left the server.`);
+                this.connectedClients = this.connectedClients.filter(c => c.serverClient !== client);
+                botAccount.disconnectClient(scw);
+            });
         });
     }
 }

@@ -12,6 +12,8 @@ import InventoryHandler from "./handlers/InventoryHandler";
 import TeamsHandler from "./handlers/TeamsHandler";
 import ScoreboardsHandler from "./handlers/ScoreboardsHandler";
 import BossBarsHandler from "./handlers/BossBarsHandler";
+import { ServerClientWrapper } from "../../server/ServerClientWrapper";
+import { Main } from "../../Main";
 
 
 export default class BotAccount {
@@ -85,11 +87,13 @@ export default class BotAccount {
         return this.bot !== null && !this.connectionEnded;
     }
 
-    public connectClient(client: ServerClient): void {
+    public connectClient(scw: ServerClientWrapper): void {
+        scw.connectedToBotAccount = this;
         if (!this.isConnected()) {
             throw new Error("Bot account is not connected.");
         }
-        const loginPacket = Server.mcData.loginPacket;
+        const client = scw.serverClient;
+        const loginPacket = Main.server.mcData.loginPacket;
         client.write("login", {
             ...loginPacket,
             entityId: client.id,
@@ -149,8 +153,17 @@ export default class BotAccount {
 
         // wait 30 seconds
         setTimeout(() => {
-            this.proxyHandler.startProxyPackets(client);
-        }, 1000);
+            this.proxyHandler.startProxyPackets(scw);
+        }, 3000);
+    }
+
+    public disconnectClient(scw: ServerClientWrapper): void {
+        if (scw.connectedToBotAccount !== this) {
+            throw new Error("Client is not connected to this bot account.");
+        }
+        scw.connectedToBotAccount = null;
+        scw.serverClient.end("Disconnected from bot account.");
+        logger.info(`Client disconnected from bot account ${this.username}.`);
     }
 
     public log(type: LogType, message: string): void {

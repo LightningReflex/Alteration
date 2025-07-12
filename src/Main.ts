@@ -5,6 +5,7 @@ import { Server } from "./server/Server";
 
 export class Main {
     public static botAccountManager: BotAccountManager = new BotAccountManager();
+    public static server: Server = new Server();
 
     public static async main(): Promise<void> {
         let email;
@@ -21,6 +22,6 @@ export class Main {
         }
         Main.botAccountManager.addAccount(email, "minehut.com", 25565);
 
-        Server.start();
+        await Main.server.start();
     }
 }
